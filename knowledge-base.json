@@ -1,0 +1,252 @@
+{
+  "topics": [
+    {
+      "id": "variables",
+      "title": "Variables",
+      "description": "Variables are containers that store data values. They allow you to save information and use it later in your program.",
+      "keywords": ["variable", "var", "let", "const", "assignment", "declaration", "data storage"],
+      "difficulty": "beginner",
+      "category": "fundamentals",
+      "examples": [
+        {
+          "title": "Basic Variable Declaration",
+          "description": "How to create and assign values to variables",
+          "code": "// JavaScript\nlet name = 'Alice';\nlet age = 25;\nconst isStudent = true;\n\n// Python\nname = 'Alice'\nage = 25\nis_student = True",
+          "explanation": "Variables store different types of data. 'let' allows reassignment, 'const' creates a constant that cannot be changed."
+        },
+        {
+          "title": "Variable Types",
+          "description": "Different data types you can store in variables",
+          "code": "// Numbers\nlet count = 42;\nlet price = 19.99;\n\n// Strings\nlet message = 'Hello, World!';\nlet name = \"Alice\";\n\n// Booleans\nlet isActive = true;\nlet isComplete = false;\n\n// Arrays\nlet fruits = ['apple', 'banana', 'orange'];\n\n// Objects\nlet person = {\n  name: 'Alice',\n  age: 25,\n  city: 'New York'\n};",
+          "explanation": "Variables can hold different types of data: numbers, text (strings), true/false values (booleans), lists (arrays), and complex data structures (objects)."
+        }
+      ],
+      "commonQuestions": [
+        "What is a variable?",
+        "How do I declare a variable?",
+        "What's the difference between let and const?",
+        "What types of data can variables store?"
+      ]
+    },
+    {
+      "id": "loops",
+      "title": "Loops",
+      "description": "Loops allow you to repeat a block of code multiple times. They're essential for processing lists of data and automating repetitive tasks.",
+      "keywords": ["loop", "for", "while", "iteration", "repeat", "foreach", "range"],
+      "difficulty": "beginner",
+      "category": "control-flow",
+      "examples": [
+        {
+          "title": "For Loop",
+          "description": "Execute code a specific number of times",
+          "code": "// JavaScript\nfor (let i = 0; i < 5; i++) {\n  console.log('Count:', i);\n}\n\n// Python\nfor i in range(5):\n    print(f'Count: {i}')",
+          "explanation": "For loops run a specific number of times. The counter starts at 0, continues while the condition is true, and increments after each iteration."
+        },
+        {
+          "title": "While Loop",
+          "description": "Repeat code while a condition is true",
+          "code": "// JavaScript\nlet count = 0;\nwhile (count < 3) {\n  console.log('Hello!');\n  count++;\n}\n\n// Python\ncount = 0\nwhile count < 3:\n    print('Hello!')\n    count += 1",
+          "explanation": "While loops continue running as long as the condition is true. Make sure the condition will eventually become false to avoid infinite loops."
+        },
+        {
+          "title": "Looping Through Arrays",
+          "description": "Process each item in a list",
+          "code": "// JavaScript\nlet fruits = ['apple', 'banana', 'orange'];\nfor (let fruit of fruits) {\n  console.log('I like', fruit);\n}\n\n// Python\nfruits = ['apple', 'banana', 'orange']\nfor fruit in fruits:\n    print(f'I like {fruit}')",
+          "explanation": "You can loop through arrays to process each element. This is very useful for working with lists of data."
+        }
+      ],
+      "commonQuestions": [
+        "What is a loop?",
+        "How do I create a for loop?",
+        "What's the difference between for and while loops?",
+        "How do I loop through an array?"
+      ]
+    },
+    {
+      "id": "functions",
+      "title": "Functions",
+      "description": "Functions are reusable blocks of code that perform specific tasks. They help organize code and avoid repetition.",
+      "keywords": ["function", "method", "def", "return", "parameter", "argument", "call"],
+      "difficulty": "beginner",
+      "category": "fundamentals",
+      "examples": [
+        {
+          "title": "Basic Function",
+          "description": "Creating and calling a simple function",
+          "code": "// JavaScript\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\n\nlet message = greet('Alice');\nconsole.log(message); // Hello, Alice!\n\n// Python\ndef greet(name):\n    return f'Hello, {name}!'\n\nmessage = greet('Alice')\nprint(message)  # Hello, Alice!",
+          "explanation": "Functions take input (parameters), process it, and return output. They make code reusable and organized."
+        },
+        {
+          "title": "Function with Multiple Parameters",
+          "description": "Functions that accept multiple inputs",
+          "code": "// JavaScript\nfunction calculateArea(length, width) {\n  return length * width;\n}\n\nlet area = calculateArea(10, 5);\nconsole.log('Area:', area); // Area: 50\n\n// Python\ndef calculate_area(length, width):\n    return length * width\n\narea = calculate_area(10, 5)\nprint(f'Area: {area}')  # Area: 50",
+          "explanation": "Functions can accept multiple parameters. The order of arguments must match the order of parameters."
+        }
+      ],
+      "commonQuestions": [
+        "What is a function?",
+        "How do I create a function?",
+        "What are parameters and arguments?",
+        "How do I return values from functions?"
+      ]
+    },
+    {
+      "id": "conditionals",
+      "title": "Conditional Statements",
+      "description": "Conditional statements allow your program to make decisions and execute different code based on conditions.",
+      "keywords": ["if", "else", "elif", "condition", "boolean", "decision", "branching"],
+      "difficulty": "beginner",
+      "category": "control-flow",
+      "examples": [
+        {
+          "title": "Basic If Statement",
+          "description": "Execute code only when a condition is true",
+          "code": "// JavaScript\nlet age = 18;\nif (age >= 18) {\n  console.log('You are an adult');\n}\n\n// Python\nage = 18\nif age >= 18:\n    print('You are an adult')",
+          "explanation": "If statements check a condition and execute code only if the condition is true."
+        },
+        {
+          "title": "If-Else Statement",
+          "description": "Choose between two different actions",
+          "code": "// JavaScript\nlet temperature = 25;\nif (temperature > 20) {\n  console.log('It\\'s warm outside');\n} else {\n  console.log('It\\'s cold outside');\n}\n\n// Python\ntemperature = 25\nif temperature > 20:\n    print('It\\'s warm outside')\nelse:\n    print('It\\'s cold outside')",
+          "explanation": "If-else statements provide an alternative action when the condition is false."
+        },
+        {
+          "title": "Multiple Conditions",
+          "description": "Handle multiple possible conditions",
+          "code": "// JavaScript\nlet score = 85;\nif (score >= 90) {\n  console.log('Grade: A');\n} else if (score >= 80) {\n  console.log('Grade: B');\n} else if (score >= 70) {\n  console.log('Grade: C');\n} else {\n  console.log('Grade: F');\n}\n\n// Python\nscore = 85\nif score >= 90:\n    print('Grade: A')\nelif score >= 80:\n    print('Grade: B')\nelif score >= 70:\n    print('Grade: C')\nelse:\n    print('Grade: F')",
+          "explanation": "You can chain multiple conditions using else-if (elif in Python) to handle different scenarios."
+        }
+      ],
+      "commonQuestions": [
+        "What are conditional statements?",
+        "How do I use if statements?",
+        "What's the difference between if and if-else?",
+        "How do I check multiple conditions?"
+      ]
+    },
+    {
+      "id": "arrays",
+      "title": "Arrays and Lists",
+      "description": "Arrays (or lists) are collections of items stored in a specific order. They allow you to work with multiple pieces of related data.",
+      "keywords": ["array", "list", "index", "element", "length", "push", "pop", "slice"],
+      "difficulty": "beginner",
+      "category": "data-structures",
+      "examples": [
+        {
+          "title": "Creating and Accessing Arrays",
+          "description": "How to create arrays and access their elements",
+          "code": "// JavaScript\nlet fruits = ['apple', 'banana', 'orange'];\nconsole.log(fruits[0]); // apple\nconsole.log(fruits.length); // 3\n\n// Python\nfruits = ['apple', 'banana', 'orange']\nprint(fruits[0])  # apple\nprint(len(fruits))  # 3",
+          "explanation": "Arrays use zero-based indexing. The first element is at index 0, second at index 1, and so on."
+        },
+        {
+          "title": "Modifying Arrays",
+          "description": "Adding and removing elements from arrays",
+          "code": "// JavaScript\nlet numbers = [1, 2, 3];\nnumbers.push(4); // Add to end\nnumbers.unshift(0); // Add to beginning\nnumbers.pop(); // Remove from end\nconsole.log(numbers); // [0, 1, 2, 3]\n\n// Python\nnumbers = [1, 2, 3]\nnumbers.append(4)  # Add to end\nnumbers.insert(0, 0)  # Add to beginning\nnumbers.pop()  # Remove from end\nprint(numbers)  # [0, 1, 2, 3]",
+          "explanation": "You can add elements to the beginning or end of arrays, and remove elements from the end."
+        }
+      ],
+      "commonQuestions": [
+        "What is an array?",
+        "How do I access array elements?",
+        "How do I add items to an array?",
+        "What is array indexing?"
+      ]
+    },
+    {
+      "id": "objects",
+      "title": "Objects and Dictionaries",
+      "description": "Objects (or dictionaries) store data as key-value pairs. They're perfect for representing real-world entities with multiple properties.",
+      "keywords": ["object", "dictionary", "key", "value", "property", "method", "json"],
+      "difficulty": "intermediate",
+      "category": "data-structures",
+      "examples": [
+        {
+          "title": "Creating Objects",
+          "description": "How to create and access object properties",
+          "code": "// JavaScript\nlet person = {\n  name: 'Alice',\n  age: 25,\n  city: 'New York',\n  isStudent: true\n};\n\nconsole.log(person.name); // Alice\nconsole.log(person['age']); // 25\n\n// Python\nperson = {\n    'name': 'Alice',\n    'age': 25,\n    'city': 'New York',\n    'is_student': True\n}\n\nprint(person['name'])  # Alice\nprint(person.get('age'))  # 25",
+          "explanation": "Objects store data as key-value pairs. You can access values using dot notation or bracket notation."
+        },
+        {
+          "title": "Object Methods",
+          "description": "Adding functions to objects",
+          "code": "// JavaScript\nlet calculator = {\n  add: function(a, b) {\n    return a + b;\n  },\n  multiply: function(a, b) {\n    return a * b;\n  }\n};\n\nconsole.log(calculator.add(5, 3)); // 8\n\n// Python\nclass Calculator:\n    def add(self, a, b):\n        return a + b\n    \n    def multiply(self, a, b):\n        return a * b\n\ncalc = Calculator()\nprint(calc.add(5, 3))  # 8",
+          "explanation": "Objects can contain methods (functions) that operate on the object's data."
+        }
+      ],
+      "commonQuestions": [
+        "What is an object?",
+        "How do I create an object?",
+        "How do I access object properties?",
+        "What's the difference between objects and arrays?"
+      ]
+    },
+    {
+      "id": "classes",
+      "title": "Classes and Object-Oriented Programming",
+      "description": "Classes are blueprints for creating objects. They define the structure and behavior that objects of that type will have.",
+      "keywords": ["class", "object", "constructor", "method", "inheritance", "encapsulation", "polymorphism"],
+      "difficulty": "intermediate",
+      "category": "oop",
+      "examples": [
+        {
+          "title": "Basic Class",
+          "description": "Creating a simple class with properties and methods",
+          "code": "// JavaScript\nclass Person {\n  constructor(name, age) {\n    this.name = name;\n    this.age = age;\n  }\n  \n  greet() {\n    return `Hello, I'm ${this.name}`;\n  }\n}\n\nlet person = new Person('Alice', 25);\nconsole.log(person.greet()); // Hello, I'm Alice\n\n// Python\nclass Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n    \n    def greet(self):\n        return f'Hello, I\\'m {self.name}'\n\nperson = Person('Alice', 25)\nprint(person.greet())  # Hello, I'm Alice",
+          "explanation": "Classes define the structure of objects. The constructor initializes new instances, and methods define the object's behavior."
+        },
+        {
+          "title": "Inheritance",
+          "description": "Creating new classes based on existing ones",
+          "code": "// JavaScript\nclass Student extends Person {\n  constructor(name, age, grade) {\n    super(name, age);\n    this.grade = grade;\n  }\n  \n  study() {\n    return `${this.name} is studying`;\n  }\n}\n\nlet student = new Student('Bob', 20, 'A');\nconsole.log(student.greet()); // Hello, I'm Bob\nconsole.log(student.study()); // Bob is studying\n\n// Python\nclass Student(Person):\n    def __init__(self, name, age, grade):\n        super().__init__(name, age)\n        self.grade = grade\n    \n    def study(self):\n        return f'{self.name} is studying'\n\nstudent = Student('Bob', 20, 'A')\nprint(student.greet())  # Hello, I'm Bob\nprint(student.study())  # Bob is studying",
+          "explanation": "Inheritance allows new classes to inherit properties and methods from existing classes, promoting code reuse."
+        }
+      ],
+      "commonQuestions": [
+        "What is a class?",
+        "How do I create a class?",
+        "What is inheritance?",
+        "What's the difference between a class and an object?"
+      ]
+    },
+    {
+      "id": "error-handling",
+      "title": "Error Handling",
+      "description": "Error handling allows your program to gracefully deal with unexpected situations and continue running instead of crashing.",
+      "keywords": ["try", "catch", "error", "exception", "throw", "finally", "debugging"],
+      "difficulty": "intermediate",
+      "category": "advanced",
+      "examples": [
+        {
+          "title": "Basic Try-Catch",
+          "description": "Catching and handling errors",
+          "code": "// JavaScript\ntry {\n  let result = 10 / 0;\n  console.log('Result:', result);\n} catch (error) {\n  console.log('An error occurred:', error.message);\n} finally {\n  console.log('This always runs');\n}\n\n// Python\ntry:\n    result = 10 / 0\n    print(f'Result: {result}')\nexcept ZeroDivisionError as e:\n    print(f'An error occurred: {e}')\nfinally:\n    print('This always runs')",
+          "explanation": "Try-catch blocks allow you to handle errors gracefully. The finally block always executes, regardless of whether an error occurred."
+        },
+        {
+          "title": "Throwing Custom Errors",
+          "description": "Creating and throwing your own errors",
+          "code": "// JavaScript\nfunction divide(a, b) {\n  if (b === 0) {\n    throw new Error('Cannot divide by zero');\n  }\n  return a / b;\n}\n\ntry {\n  let result = divide(10, 0);\n} catch (error) {\n  console.log('Error:', error.message);\n}\n\n// Python\ndef divide(a, b):\n    if b == 0:\n        raise ValueError('Cannot divide by zero')\n    return a / b\n\ntry:\n    result = divide(10, 0)\nexcept ValueError as e:\n    print(f'Error: {e}')",
+          "explanation": "You can create custom errors to provide meaningful feedback when something goes wrong in your program."
+        }
+      ],
+      "commonQuestions": [
+        "What is error handling?",
+        "How do I catch errors?",
+        "How do I create custom errors?",
+        "What's the difference between try, catch, and finally?"
+      ]
+    }
+  ],
+  "categories": {
+    "fundamentals": "Basic programming concepts",
+    "control-flow": "How programs make decisions and repeat actions",
+    "data-structures": "Ways to organize and store data",
+    "oop": "Object-oriented programming concepts",
+    "advanced": "More complex programming topics"
+  },
+  "difficultyLevels": {
+    "beginner": "Suitable for those new to programming",
+    "intermediate": "Requires some programming experience",
+    "advanced": "For experienced programmers"
+  }
+}

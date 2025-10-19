@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeSensei - Programming Learning Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <button class="menu-btn" id="menuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="logo">
+                        <i class="fas fa-brain"></i>
+                        <h1>CodeSensei</h1>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="progress-btn" id="progressBtn">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Progress</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Learning Topics</h2>
+                <button class="close-btn" id="closeSidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3>Quick Questions</h3>
+                    <div class="quick-questions">
+                        <button class="question-btn" data-question="What is a variable?">What is a variable?</button>
+                        <button class="question-btn" data-question="How do loops work?">How do loops work?</button>
+                        <button class="question-btn" data-question="Explain functions">Explain functions</button>
+                        <button class="question-btn" data-question="What are arrays?">What are arrays?</button>
+                        <button class="question-btn" data-question="How do I handle errors?">How do I handle errors?</button>
+                    </div>
+                </div>
+
+                <div class="nav-section">
+                    <h3>Programming Topics</h3>
+                    <div class="topics-list">
+                        <button class="topic-btn" data-topic="variables">
+                            <span class="topic-icon">📝</span>
+                            <span>Variables</span>
+                        </button>
+                        <button class="topic-btn" data-topic="loops">
+                            <span class="topic-icon">🔄</span>
+                            <span>Loops</span>
+                        </button>
+                        <button class="topic-btn" data-topic="functions">
+                            <span class="topic-icon">⚙️</span>
+                            <span>Functions</span>
+                        </button>
+                        <button class="topic-btn" data-topic="conditionals">
+                            <span class="topic-icon">🔀</span>
+                            <span>Conditionals</span>
+                        </button>
+                        <button class="topic-btn" data-topic="arrays">
+                            <span class="topic-icon">📋</span>
+                            <span>Arrays</span>
+                        </button>
+                        <button class="topic-btn" data-topic="objects">
+                            <span class="topic-icon">📦</span>
+                            <span>Objects</span>
+                        </button>
+                        <button class="topic-btn" data-topic="classes">
+                            <span class="topic-icon">🏗️</span>
+                            <span>Classes</span>
+                        </button>
+                        <button class="topic-btn" data-topic="error-handling">
+                            <span class="topic-icon">⚠️</span>
+                            <span>Error Handling</span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="footer-btn" id="showProgress">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>View Progress</span>
+                </button>
+                <button class="footer-btn">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </button>
+                <button class="footer-btn">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="chat-container">
+                <div class="messages" id="messages">
+                    <div class="message assistant-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>Hello! I'm CodeSensei, your programming learning assistant. I can help you understand programming concepts like variables, loops, functions, and more. What would you like to learn about today?</p>
+                        </div>
+                        <div class="message-time">Just now</div>
+                    </div>
+                </div>
+
+                <!-- Suggestions -->
+                <div class="suggestions" id="suggestions">
+                    <button class="suggestion-btn" data-question="What is a variable?">What is a variable?</button>
+                    <button class="suggestion-btn" data-question="How do loops work?">How do loops work?</button>
+                    <button class="suggestion-btn" data-question="Explain functions">Explain functions</button>
+                    <button class="suggestion-btn" data-question="What are arrays?">What are arrays?</button>
+                    <button class="suggestion-btn" data-question="How do I handle errors?">How do I handle errors?</button>
+                </div>
+
+                <!-- Typing Indicator -->
+                <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                    <div class="message assistant-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <div class="typing-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <form class="input-form" id="inputForm">
+                    <div class="input-container">
+                        <input type="text" id="messageInput" placeholder="Ask me about programming concepts..." autocomplete="off">
+                        <button type="submit" class="send-btn" id="sendBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="input-hint">
+                        Ask questions like "What is a variable?" or "How do loops work?"
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <!-- Progress Modal -->
+        <div class="modal-overlay" id="progressModal" style="display: none;">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">
+                        <i class="fas fa-chart-bar"></i>
+                        <h2>Learning Progress</h2>
+                    </div>
+                    <button class="modal-close" id="closeProgressModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-content">
+                    <!-- Stats Overview -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalQuestions">0</div>
+                            <div class="stat-label">Questions Asked</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="streakDays">0</div>
+                            <div class="stat-label">Day Streak</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="topicsExplored">0</div>
+                            <div class="stat-label">Topics Explored</div>
+                        </div>
+                    </div>
+
+                    <!-- Topic Progress -->
+                    <div class="progress-section">
+                        <h3>Topic Progress</h3>
+                        <div class="topics-progress" id="topicsProgress">
+                            <!-- Progress bars will be generated here -->
+                        </div>
+                    </div>
+
+                    <!-- Learning Tips -->
+                    <div class="tips-section">
+                        <h3>💡 Learning Tips</h3>
+                        <ul class="tips-list">
+                            <li>Ask follow-up questions to deepen your understanding</li>
+                            <li>Try to explain concepts back to CodeSensei</li>
+                            <li>Practice with the code examples provided</li>
+                            <li>Explore related topics to build connections</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

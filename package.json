@@ -1,0 +1,60 @@
+{
+  "name": "codesensei",
+  "version": "1.0.0",
+  "description": "Dialogue-Based Desktop Learning Assistant for Programming Concepts",
+  "main": "main.js",
+  "homepage": "./",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "build": "electron-builder",
+    "dist": "electron-builder",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux",
+    "pack": "electron-builder --dir"
+  },
+  "keywords": [
+    "programming",
+    "education",
+    "learning",
+    "desktop",
+    "electron",
+    "offline"
+  ],
+  "author": "CodeSensei Team",
+  "license": "MIT",
+  "type": "commonjs",
+  "build": {
+    "appId": "com.codesensei.app",
+    "productName": "CodeSensei",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "index.html",
+      "styles.css",
+      "app.js",
+      "knowledge-base.json",
+      "node_modules/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.education",
+      "target": "dmg",
+      "icon": "assets/icon.icns"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/icon.png"
+    }
+  },
+  "devDependencies": {
+    "electron": "^38.3.0",
+    "electron-builder": "^26.0.12"
+  }
+}
