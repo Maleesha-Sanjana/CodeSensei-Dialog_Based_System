@@ -392,6 +392,12 @@ class CodeSensei {
                 // Add assistant response
                 const response = this.formatResponse(bestMatch);
                 this.addMessage('assistant', response);
+                
+                // Ensure scroll after content is rendered
+                setTimeout(() => {
+                    const messagesContainer = document.getElementById('messages');
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }, 300);
             } else {
                 this.addMessage('assistant', "I'm not sure I understand that question. Could you try asking about programming concepts like variables, loops, functions, arrays, or objects? I'm here to help you learn programming fundamentals!");
             }
@@ -411,31 +417,54 @@ class CodeSensei {
         const queryLower = query.toLowerCase();
         const results = [];
         
+        // Extract key terms from the query
+        const queryTerms = queryLower.split(/\s+/).filter(term => 
+            term.length > 2 && 
+            !['what', 'is', 'are', 'how', 'do', 'does', 'can', 'could', 'tell', 'me', 'about', 'explain', 'the', 'a', 'an'].includes(term)
+        );
+        
         for (const topic of this.knowledgeBase.topics) {
             let score = 0;
             
-            // Check title and description
-            if (topic.title.toLowerCase().includes(queryLower)) {
-                score += 10;
-            }
-            if (topic.description.toLowerCase().includes(queryLower)) {
-                score += 5;
+            // Check if any query term matches the topic title
+            for (const term of queryTerms) {
+                if (topic.title.toLowerCase().includes(term)) {
+                    score += 15;
+                }
             }
             
-            // Check keywords
+            // Check if any query term matches keywords
             for (const keyword of topic.keywords) {
-                if (keyword.toLowerCase().includes(queryLower)) {
-                    score += 3;
+                for (const term of queryTerms) {
+                    if (keyword.toLowerCase().includes(term) || term.includes(keyword.toLowerCase())) {
+                        score += 8;
+                    }
+                }
+            }
+            
+            // Check if any query term matches description
+            for (const term of queryTerms) {
+                if (topic.description.toLowerCase().includes(term)) {
+                    score += 5;
+                }
+            }
+            
+            // Check common questions for exact matches
+            for (const question of topic.commonQuestions) {
+                if (question.toLowerCase().includes(queryLower) || queryLower.includes(question.toLowerCase())) {
+                    score += 20;
                 }
             }
             
             // Check examples
             for (const example of topic.examples) {
-                if (example.title.toLowerCase().includes(queryLower)) {
-                    score += 2;
-                }
-                if (example.description.toLowerCase().includes(queryLower)) {
-                    score += 1;
+                for (const term of queryTerms) {
+                    if (example.title.toLowerCase().includes(term)) {
+                        score += 3;
+                    }
+                    if (example.description.toLowerCase().includes(term)) {
+                        score += 2;
+                    }
                 }
             }
             
@@ -515,8 +544,10 @@ class CodeSensei {
 
         messagesContainer.appendChild(messageElement);
         
-        // Scroll to bottom
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        // Scroll to bottom immediately and smoothly
+        setTimeout(() => {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }, 50);
 
         // Hide suggestions after first message
         if (this.currentMessageId > 2) {
@@ -527,7 +558,9 @@ class CodeSensei {
     showTypingIndicator() {
         document.getElementById('typingIndicator').style.display = 'block';
         const messagesContainer = document.getElementById('messages');
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        setTimeout(() => {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }, 50);
     }
 
     hideTypingIndicator() {
