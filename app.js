@@ -18,6 +18,7 @@ class CodeSensei {
         await this.loadProgress();
         this.setupEventListeners();
         this.updateProgressDisplay();
+        await this.checkAuth();
     }
 
     async loadKnowledgeBase() {
@@ -367,6 +368,24 @@ class CodeSensei {
         messageInput.addEventListener('input', () => {
             sendBtn.disabled = !messageInput.value.trim();
         });
+
+        // Login form
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.handleLoginSubmit();
+            });
+        }
+
+        // Logout buttons
+        const logoutHeader = document.getElementById('logoutHeader');
+        const logoutSidebar = document.getElementById('logoutSidebar');
+        [logoutHeader, logoutSidebar].forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', () => this.logout());
+            }
+        });
     }
 
     async sendMessage(content) {
@@ -396,7 +415,10 @@ class CodeSensei {
                 // Ensure scroll after content is rendered
                 setTimeout(() => {
                     const messagesContainer = document.getElementById('messages');
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    const scroller = messagesContainer ? messagesContainer.parentElement : null;
+                    if (scroller) {
+                        scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
+                    }
                 }, 300);
             } else {
                 this.addMessage('assistant', "I'm not sure I understand that question. Could you try asking about programming concepts like variables, loops, functions, arrays, or objects? I'm here to help you learn programming fundamentals!");
@@ -546,7 +568,10 @@ class CodeSensei {
         
         // Scroll to bottom immediately and smoothly
         setTimeout(() => {
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            const scroller = messagesContainer.parentElement;
+            if (scroller) {
+                scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
+            }
         }, 50);
 
         // Hide suggestions after first message
@@ -558,8 +583,11 @@ class CodeSensei {
     showTypingIndicator() {
         document.getElementById('typingIndicator').style.display = 'block';
         const messagesContainer = document.getElementById('messages');
+        const scroller = messagesContainer ? messagesContainer.parentElement : null;
         setTimeout(() => {
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            if (scroller) {
+                scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
+            }
         }, 50);
     }
 
@@ -578,6 +606,101 @@ class CodeSensei {
         suggestionBtns.forEach(btn => {
             btn.disabled = !enabled;
         });
+    }
+
+    // ===== Authentication =====
+    async checkAuth() {
+        const userJson = localStorage.getItem('codesensei-user');
+        if (!userJson) {
+            // Not logged in
+            this.setInputEnabled(false);
+            this.showLoginModal();
+            return;
+        }
+        // Logged in
+        this.setInputEnabled(true);
+        this.hideLoginModal();
+    }
+
+    showLoginModal() {
+        const modal = document.getElementById('loginModal');
+        if (modal) modal.style.display = 'flex';
+        const emailEl = document.getElementById('loginEmail');
+        if (emailEl) emailEl.focus();
+    }
+
+    hideLoginModal() {
+        const modal = document.getElementById('loginModal');
+        if (modal) modal.style.display = 'none';
+        const errorEl = document.getElementById('loginError');
+        if (errorEl) errorEl.style.display = 'none';
+    }
+
+    getUsersStore() {
+        try {
+            return JSON.parse(localStorage.getItem('codesensei-users') || '{}');
+        } catch {
+            return {};
+        }
+    }
+
+    saveUsersStore(store) {
+        localStorage.setItem('codesensei-users', JSON.stringify(store));
+    }
+
+    async hashPassword(password) {
+        const enc = new TextEncoder();
+        const data = enc.encode(password);
+        const digest = await crypto.subtle.digest('SHA-256', data);
+        const bytes = Array.from(new Uint8Array(digest));
+        return bytes.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async handleLoginSubmit() {
+        const emailEl = document.getElementById('loginEmail');
+        const passEl = document.getElementById('loginPassword');
+        const errorEl = document.getElementById('loginError');
+        const email = (emailEl?.value || '').trim().toLowerCase();
+        const password = passEl?.value || '';
+
+        if (!email || !password) {
+            if (errorEl) {
+                errorEl.textContent = 'Please provide both email and password.';
+                errorEl.style.display = 'block';
+            }
+            return;
+        }
+
+        const store = this.getUsersStore();
+        const hash = await this.hashPassword(password);
+        const existing = store[email];
+
+        if (!existing) {
+            // Create account
+            store[email] = { passwordHash: hash, createdAt: Date.now() };
+            this.saveUsersStore(store);
+        } else if (existing.passwordHash !== hash) {
+            if (errorEl) {
+                errorEl.textContent = 'Invalid credentials. Please try again.';
+                errorEl.style.display = 'block';
+            }
+            return;
+        }
+
+        // Save current session user
+        localStorage.setItem('codesensei-user', JSON.stringify({ email }));
+        this.hideLoginModal();
+        this.setInputEnabled(true);
+    }
+
+    logout() {
+        localStorage.removeItem('codesensei-user');
+        // Optionally clear progress for privacy; keeping progress by default
+        this.showLoginModal();
+        this.setInputEnabled(false);
+        // Close sidebar if open
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) sidebar.classList.remove('open');
     }
 
     updateProgress(topicId) {
@@ -610,8 +733,10 @@ class CodeSensei {
     updateProgressDisplay() {
         // Update stats
         document.getElementById('totalQuestions').textContent = this.userProgress.totalQuestions;
-        document.getElementById('streakDays').textContent = this.userProgress.streak;
-        document.getElementById('topicsExplored').textContent = Object.keys(this.userProgress.topics).length;
+        const topicsCountEl = document.getElementById('topicsExplored');
+        if (topicsCountEl) {
+            topicsCountEl.textContent = Object.keys(this.userProgress.topics).length;
+        }
 
         // Update topic progress
         const topicsProgress = document.getElementById('topicsProgress');
