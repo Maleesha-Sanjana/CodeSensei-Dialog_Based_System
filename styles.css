@@ -238,6 +238,32 @@ body {
     background-color: #f9fafb;
 }
 
+/* Circular icon buttons */
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 9999px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-right .icon-btn {
+    background-color: #f3f4f6;
+}
+
+.header-right .icon-btn:hover {
+    background-color: #e5e7eb;
+}
+
+.sidebar-footer .icon-btn {
+    width: 44px;
+    height: 44px;
+    margin: 0.25rem 0;
+    align-self: center;
+}
+
 /* Main Content */
 .main-content {
     flex: 1;

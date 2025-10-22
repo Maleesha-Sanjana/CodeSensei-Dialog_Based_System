@@ -23,17 +23,14 @@
                     </div>
                 </div>
                 <div class="header-right">
-                    <button class="progress-btn" id="progressBtn">
+                    <button class="progress-btn icon-btn" id="progressBtn" aria-label="Progress" title="Progress">
                         <i class="fas fa-chart-bar"></i>
-                        <span>Progress</span>
                     </button>
-                    <button class="progress-btn" id="portfolioBtn">
+                    <button class="progress-btn icon-btn" id="profileBtn" aria-label="Profile" title="Profile">
                         <i class="fas fa-id-card"></i>
-                        <span>Portfolio</span>
                     </button>
-                    <button class="progress-btn" id="logoutHeader">
+                    <button class="progress-btn icon-btn" id="logoutHeader" aria-label="Logout" title="Logout">
                         <i class="fas fa-sign-out-alt"></i>
-                        <span>Logout</span>
                     </button>
                 </div>
             </div>
@@ -100,23 +97,15 @@
             </nav>
 
             <div class="sidebar-footer">
-                <button class="footer-btn" id="showProgress">
+                <button class="footer-btn" id="showProgress" aria-label="Progress" title="Progress">
                     <i class="fas fa-chart-bar"></i>
-                    <span>View Progress</span>
+                    <span>Progress</span>
                 </button>
-                <button class="footer-btn">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </button>
-                <button class="footer-btn">
-                    <i class="fas fa-question-circle"></i>
-                    <span>Help</span>
-                </button>
-                <button class="footer-btn" id="portfolioSidebar">
+                <button class="footer-btn" id="profileSidebar" aria-label="Profile" title="Profile">
                     <i class="fas fa-id-card"></i>
-                    <span>Portfolio</span>
+                    <span>Profile</span>
                 </button>
-                <button class="footer-btn" id="logoutSidebar">
+                <button class="footer-btn" id="logoutSidebar" aria-label="Logout" title="Logout">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </button>
@@ -255,32 +244,44 @@
             </div>
         </div>
 
-        <!-- Portfolio Modal -->
-        <div class="modal-overlay" id="portfolioModal" style="display: none;">
+        <!-- Profile Modal -->
+        <div class="modal-overlay" id="profileModal" style="display: none;">
             <div class="modal">
                 <div class="modal-header">
                     <div class="modal-title">
-                        <i class="fas fa-id-card"></i>
-                        <h2>Your Portfolio</h2>
+                        <i class="fas fa-user-circle"></i>
+                        <h2>Your Profile</h2>
                     </div>
-                    <button class="modal-close" id="closePortfolioModal">
+                    <button class="modal-close" id="closeProfileModal">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <div class="modal-content">
-                    <form id="portfolioForm" class="input-form">
-                        <div class="input-container" style="flex-direction: column; align-items: stretch; gap: 0.75rem;">
-                            <input type="text" id="pfName" placeholder="Full Name">
-                            <textarea id="pfBio" placeholder="Short Bio" rows="3" style="resize: vertical;"></textarea>
-                            <input type="text" id="pfSkills" placeholder="Skills (comma separated)">
-                            <input type="url" id="pfWebsite" placeholder="Website URL (optional)">
-                            <input type="url" id="pfGithub" placeholder="GitHub URL (optional)">
-                            <div id="portfolioError" class="auth-error" style="display:none;">Sign in with email to edit portfolio. Guest cannot edit.</div>
-                            <div class="auth-actions">
-                                <button type="submit" class="auth-submit" id="savePortfolioBtn">Save</button>
+                    <div class="input-form" style="gap: 1rem;">
+                        <div>
+                            <div class="stat-label" style="margin-bottom: 0.25rem; color:#6b7280;">Signed in as</div>
+                            <div id="profileEmail" style="font-weight:600; color:#111827;">-</div>
+                        </div>
+
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-number" id="profileTotalQuestions">0</div>
+                                <div class="stat-label">Questions Asked</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="profileTopicsExplored">0</div>
+                                <div class="stat-label">Topics Explored</div>
                             </div>
                         </div>
-                    </form>
+
+                        <div>
+                            <h3 style="margin-bottom:0.5rem;">Search History</h3>
+                            <div id="profileHistoryList" style="max-height: 240px; overflow-y:auto; border:1px solid #e5e7eb; border-radius:0.5rem; padding:0.5rem; background:white;"></div>
+                            <div class="auth-actions" style="margin-top:0.5rem;">
+                                <button type="button" class="auth-submit" id="clearHistoryBtn" style="background-color:#6b7280;">Clear History</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
