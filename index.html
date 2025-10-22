@@ -27,6 +27,10 @@
                         <i class="fas fa-chart-bar"></i>
                         <span>Progress</span>
                     </button>
+                    <button class="progress-btn" id="portfolioBtn">
+                        <i class="fas fa-id-card"></i>
+                        <span>Portfolio</span>
+                    </button>
                     <button class="progress-btn" id="logoutHeader">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Logout</span>
@@ -107,6 +111,10 @@
                 <button class="footer-btn">
                     <i class="fas fa-question-circle"></i>
                     <span>Help</span>
+                </button>
+                <button class="footer-btn" id="portfolioSidebar">
+                    <i class="fas fa-id-card"></i>
+                    <span>Portfolio</span>
                 </button>
                 <button class="footer-btn" id="logoutSidebar">
                     <i class="fas fa-sign-out-alt"></i>
@@ -238,7 +246,40 @@
                         <div class="auth-actions">
                             <button type="submit" class="auth-submit" id="loginBtn">Sign in</button>
                         </div>
-                        <div class="auth-hint">First time here? Enter an email and a new password to create your account locally.</div>
+                        <div class="auth-actions" style="margin-top: 0.5rem;">
+                            <button type="button" class="auth-submit" id="loginGuestBtn" style="background-color:#6b7280;">Continue as Guest</button>
+                        </div>
+                        <div class="auth-hint">First time here? Enter an email and a new password to create your account locally, or continue as Guest.</div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Portfolio Modal -->
+        <div class="modal-overlay" id="portfolioModal" style="display: none;">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">
+                        <i class="fas fa-id-card"></i>
+                        <h2>Your Portfolio</h2>
+                    </div>
+                    <button class="modal-close" id="closePortfolioModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-content">
+                    <form id="portfolioForm" class="input-form">
+                        <div class="input-container" style="flex-direction: column; align-items: stretch; gap: 0.75rem;">
+                            <input type="text" id="pfName" placeholder="Full Name">
+                            <textarea id="pfBio" placeholder="Short Bio" rows="3" style="resize: vertical;"></textarea>
+                            <input type="text" id="pfSkills" placeholder="Skills (comma separated)">
+                            <input type="url" id="pfWebsite" placeholder="Website URL (optional)">
+                            <input type="url" id="pfGithub" placeholder="GitHub URL (optional)">
+                            <div id="portfolioError" class="auth-error" style="display:none;">Sign in with email to edit portfolio. Guest cannot edit.</div>
+                            <div class="auth-actions">
+                                <button type="submit" class="auth-submit" id="savePortfolioBtn">Save</button>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
