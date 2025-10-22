@@ -13,6 +13,37 @@ class CodeSensei {
         this.init();
     }
 
+    // Accept broader IT topics
+    isITQuery(query) {
+        if (!query) return false;
+        const q = query.toLowerCase();
+        // Core programming (reuse quick code-like detection)
+        const codeLike = /(\bfunction\b|\bclass\b|=>|\{\}|;|const\s+|let\s+|def\s+|print\(|for\s*\(|while\s*\(|if\s*\(|try\s*\{?)/i.test(query);
+        if (codeLike || this.isProgrammingQuery(q)) return true;
+
+        // Broader IT keywords
+        const itTerms = [
+            // Web & APIs
+            'html','css','javascript','js','frontend','backend','api','rest','json','xml','http','https','cookie','session','cors',
+            // Databases
+            'database','databases','sql','nosql','mysql','postgres','sqlite','mongodb','query','index','transaction','schema',
+            // Networking
+            'network','networking','tcp','udp','tcp/ip','ip','ipv4','ipv6','dns','dhcp','nat','subnet','gateway','router','switch','firewall','vpn','ssl','tls','ssh','ftp','smtp','http/2',
+            // OS & platforms
+            'linux','ubuntu','debian','windows','macos','kernel','process','thread','filesystem','bash','powershell','cmd',
+            // Cloud & DevOps
+            'cloud','aws','azure','gcp','iam','s3','ec2','lambda','cloudfront','vpc','eks','aks','gke','docker','kubernetes','k8s','container','compose','helm','terraform','ansible','cicd','ci/cd','pipeline',
+            // Security
+            'security','cybersecurity','xss','csrf','sql injection','hash','encryption','aes','rsa','jwt','oauth','oidc','sso','pentest',
+            // Tools & VCS
+            'git','github','gitlab','bitbucket','branch','merge','rebase','commit','tag','version','semver',
+            // Hardware & Infra
+            'cpu','gpu','ram','ssd','nvme','raid','virtualization','hypervisor','vm','vmware','virtualbox',
+            // General IT
+            'it support','helpdesk','service desk','ticket','sla','monitoring','logging','observability','prometheus','grafana','elk','splunk'
+        ];
+        return itTerms.some(t => q.includes(t));
+    }
     async init() {
         await this.loadKnowledgeBase();
         await this.loadProgress();
@@ -289,6 +320,28 @@ class CodeSensei {
         }
     }
 
+    isProgrammingQuery(query) {
+        if (!query) return false;
+        const q = query.toLowerCase();
+        // Whitelist of programming terms and code patterns
+        const terms = [
+            'program', 'code', 'coding', 'developer', 'debug', 'bug', 'algorithm', 'data structure',
+            'variable', 'variables', 'var', 'let', 'const',
+            'loop', 'loops', 'for', 'while', 'foreach',
+            'function', 'functions', 'method', 'return', 'parameter', 'argument',
+            'array', 'arrays', 'list', 'lists', 'index',
+            'object', 'objects', 'dictionary', 'json', 'key', 'value',
+            'class', 'classes', 'constructor', 'inheritance', 'oop',
+            'conditional', 'conditionals', 'if', 'else', 'elif',
+            'error', 'errors', 'exception', 'exceptions', 'try', 'catch', 'finally',
+            'javascript', 'python', 'js', 'py'
+        ];
+        // Quick hit if code-like tokens are present
+        const codeLike = /(\bfunction\b|\bclass\b|=>|\{\}|;|const\s+|let\s+|def\s+|print\(|for\s*\(|while\s*\(|if\s*\(|try\s*\{?)/i.test(query);
+        if (codeLike) return true;
+        return terms.some(t => q.includes(t));
+    }
+
     async saveProgress() {
         try {
             localStorage.setItem('codesensei-progress', JSON.stringify(this.userProgress));
@@ -369,30 +422,26 @@ class CodeSensei {
             sendBtn.disabled = !messageInput.value.trim();
         });
 
-        // Portfolio openers and closer
-        const portfolioBtn = document.getElementById('portfolioBtn');
-        const portfolioSidebar = document.getElementById('portfolioSidebar');
-        const closePortfolioModal = document.getElementById('closePortfolioModal');
-        [portfolioBtn, portfolioSidebar].forEach(btn => {
+        // Profile openers and closer
+        const profileBtn = document.getElementById('profileBtn');
+        const profileSidebar = document.getElementById('profileSidebar');
+        const closeProfileModal = document.getElementById('closeProfileModal');
+        [profileBtn, profileSidebar].forEach(btn => {
             if (btn) {
                 btn.addEventListener('click', () => {
-                    this.openPortfolio();
+                    this.openProfile();
                     document.getElementById('sidebar').classList.remove('open');
                 });
             }
         });
-        if (closePortfolioModal) {
-            closePortfolioModal.addEventListener('click', () => {
-                document.getElementById('portfolioModal').style.display = 'none';
+        if (closeProfileModal) {
+            closeProfileModal.addEventListener('click', () => {
+                document.getElementById('profileModal').style.display = 'none';
             });
         }
-
-        const portfolioForm = document.getElementById('portfolioForm');
-        if (portfolioForm) {
-            portfolioForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                this.savePortfolio();
-            });
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+        if (clearHistoryBtn) {
+            clearHistoryBtn.addEventListener('click', () => this.clearSearchHistory());
         }
 
         // Login form
@@ -435,7 +484,7 @@ class CodeSensei {
         });
     }
 
-    // ===== Portfolio =====
+    // ===== Profile & User =====
     getCurrentUser() {
         try {
             return JSON.parse(localStorage.getItem('codesensei-user') || 'null');
@@ -444,59 +493,51 @@ class CodeSensei {
         }
     }
 
-    getPortfolioKey(email) {
-        return `codesensei-portfolio-${email}`;
+    getHistoryKey(emailOrGuest) {
+        return `codesensei-history-${emailOrGuest}`;
     }
 
-    openPortfolio() {
+    openProfile() {
         const user = this.getCurrentUser();
-        const modal = document.getElementById('portfolioModal');
-        const errorEl = document.getElementById('portfolioError');
+        const modal = document.getElementById('profileModal');
         if (!modal) return;
+        const emailEl = document.getElementById('profileEmail');
+        const totalEl = document.getElementById('profileTotalQuestions');
+        const topicsEl = document.getElementById('profileTopicsExplored');
+        const listEl = document.getElementById('profileHistoryList');
 
-        if (!user || user.guest) {
-            if (errorEl) {
-                errorEl.textContent = 'Sign in with email to edit portfolio. Guest cannot edit.';
-                errorEl.style.display = 'block';
-            }
+        // Populate identity
+        emailEl.textContent = user ? (user.guest ? 'Guest' : user.email) : '-';
+
+        // Populate stats
+        totalEl.textContent = this.userProgress.totalQuestions;
+        topicsEl.textContent = Object.keys(this.userProgress.topics).length;
+
+        // Populate history
+        const key = this.getHistoryKey(user && !user.guest ? user.email : 'guest');
+        const history = JSON.parse(localStorage.getItem(key) || '[]');
+        listEl.innerHTML = '';
+        if (history.length === 0) {
+            listEl.innerHTML = '<div style="color:#6b7280;">No history yet.</div>';
         } else {
-            if (errorEl) errorEl.style.display = 'none';
-            const key = this.getPortfolioKey(user.email);
-            const pf = JSON.parse(localStorage.getItem(key) || '{}');
-            document.getElementById('pfName').value = pf.name || '';
-            document.getElementById('pfBio').value = pf.bio || '';
-            document.getElementById('pfSkills').value = pf.skills || '';
-            document.getElementById('pfWebsite').value = pf.website || '';
-            document.getElementById('pfGithub').value = pf.github || '';
+            history.slice().reverse().forEach(item => {
+                const div = document.createElement('div');
+                div.style.padding = '0.5rem';
+                div.style.borderBottom = '1px solid #f3f4f6';
+                div.innerHTML = `<div style="font-weight:500; color:#111827;">${item.query}</div><div style="font-size:0.75rem; color:#6b7280;">${new Date(item.time).toLocaleString()}</div>`;
+                listEl.appendChild(div);
+            });
         }
 
         modal.style.display = 'flex';
     }
 
-    savePortfolio() {
+    clearSearchHistory() {
         const user = this.getCurrentUser();
-        const errorEl = document.getElementById('portfolioError');
-        if (!user || user.guest) {
-            if (errorEl) {
-                errorEl.textContent = 'Sign in with email to edit portfolio. Guest cannot edit.';
-                errorEl.style.display = 'block';
-            }
-            return;
-        }
-
-        const pf = {
-            name: document.getElementById('pfName').value.trim(),
-            bio: document.getElementById('pfBio').value.trim(),
-            skills: document.getElementById('pfSkills').value.trim(),
-            website: document.getElementById('pfWebsite').value.trim(),
-            github: document.getElementById('pfGithub').value.trim(),
-            updatedAt: Date.now()
-        };
-        localStorage.setItem(this.getPortfolioKey(user.email), JSON.stringify(pf));
-
-        // Close modal
-        const modal = document.getElementById('portfolioModal');
-        if (modal) modal.style.display = 'none';
+        const key = this.getHistoryKey(user && !user.guest ? user.email : 'guest');
+        localStorage.removeItem(key);
+        // Refresh list
+        this.openProfile();
     }
 
     async sendMessage(content) {
@@ -510,6 +551,11 @@ class CodeSensei {
         this.setInputEnabled(false);
 
         try {
+            // Only allow IT-related queries (programming, networking, OS, DB, cloud, security, etc.)
+            if (!this.isITQuery(content)) {
+                this.addMessage('assistant', "I can help with IT topics: programming, web, databases, networking, operating systems, cloud/DevOps, and cybersecurity. Please ask an IT-related question.");
+                return;
+            }
             // Search knowledge base
             const results = this.searchKnowledgeBase(content);
             
@@ -547,66 +593,100 @@ class CodeSensei {
     searchKnowledgeBase(query) {
         if (!this.knowledgeBase) return [];
 
-        const queryLower = query.toLowerCase();
+        const queryLower = (query || '').toLowerCase().trim();
+        if (!queryLower) return [];
+
+        // Basic normalization
+        const cleaned = queryLower.replace(/[^\w\s]/g, ' ');
+        const stop = new Set(['what','is','are','how','do','does','can','could','tell','me','about','explain','the','a','an','of','in','to','for','on']);
+        let terms = cleaned.split(/\s+/).filter(t => t && t.length > 1 && !stop.has(t));
+        if (terms.length === 0) terms = [queryLower];
+
+        // Simple synonyms expansion
+        const synonyms = {
+            'array': ['list','lists','arrays'],
+            'arrays': ['list','lists','array'],
+            'list': ['array','arrays','lists'],
+            'function': ['functions','method','methods','def'],
+            'functions': ['function','method','methods','def'],
+            'object': ['objects','dictionary','dict','dictionaries'],
+            'objects': ['object','dictionary','dict','dictionaries'],
+            'loop': ['loops','iterate','iteration','for','while'],
+            'loops': ['loop','iterate','iteration','for','while'],
+            'variable': ['variables','var','let','const'],
+            'variables': ['variable','var','let','const'],
+            'class': ['classes','oop'],
+            'classes': ['class','oop'],
+            'error': ['errors','exception','exceptions'],
+            'exceptions': ['error','errors','exception']
+        };
+        const expanded = new Set(terms);
+        for (const t of terms) {
+            const syns = synonyms[t];
+            if (syns) syns.forEach(s => expanded.add(s));
+        }
+        const allTerms = Array.from(expanded);
+
         const results = [];
-        
-        // Extract key terms from the query
-        const queryTerms = queryLower.split(/\s+/).filter(term => 
-            term.length > 2 && 
-            !['what', 'is', 'are', 'how', 'do', 'does', 'can', 'could', 'tell', 'me', 'about', 'explain', 'the', 'a', 'an'].includes(term)
-        );
-        
+
+        // Pre-compute word-boundary regex for whole-word matches
+        const wordRegexes = allTerms.map(t => new RegExp(`(^|\\b)${t.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')}(\\b|$)`, 'i'));
+
         for (const topic of this.knowledgeBase.topics) {
             let score = 0;
-            
-            // Check if any query term matches the topic title
-            for (const term of queryTerms) {
-                if (topic.title.toLowerCase().includes(term)) {
-                    score += 15;
+            const title = topic.title.toLowerCase();
+            const desc = topic.description.toLowerCase();
+            const keywords = (topic.keywords || []).map(k => k.toLowerCase());
+
+            // Exact phrase equality boosts
+            if (title === queryLower) score += 60;
+            if (keywords.includes(queryLower)) score += 60;
+
+            // Exact id match
+            if (topic.id && topic.id.toLowerCase() === queryLower) score += 50;
+
+            // Whole-word matches in title/keywords (high)
+            for (const re of wordRegexes) {
+                if (re.test(title)) score += 25;
+                for (const kw of keywords) {
+                    if (re.test(kw)) score += 30;
                 }
             }
-            
-            // Check if any query term matches keywords
-            for (const keyword of topic.keywords) {
-                for (const term of queryTerms) {
-                    if (keyword.toLowerCase().includes(term) || term.includes(keyword.toLowerCase())) {
-                        score += 8;
-                    }
+
+            // Contains matches (medium)
+            for (const term of allTerms) {
+                if (title.includes(term)) score += 15;
+                for (const kw of keywords) {
+                    if (kw.includes(term) || term.includes(kw)) score += 12;
+                }
+                if (desc.includes(term)) score += 6;
+            }
+
+            // Common questions (medium-high)
+            for (const question of (topic.commonQuestions || [])) {
+                const ql = question.toLowerCase();
+                if (ql === queryLower) score += 40;
+                for (const re of wordRegexes) {
+                    if (re.test(ql)) score += 15;
+                }
+                for (const term of allTerms) {
+                    if (ql.includes(term)) score += 8;
                 }
             }
-            
-            // Check if any query term matches description
-            for (const term of queryTerms) {
-                if (topic.description.toLowerCase().includes(term)) {
-                    score += 5;
+
+            // Examples lightweight check
+            for (const example of (topic.examples || [])) {
+                const et = (example.title || '').toLowerCase();
+                const ed = (example.description || '').toLowerCase();
+                for (const re of wordRegexes) {
+                    if (re.test(et)) score += 5;
+                    if (re.test(ed)) score += 3;
                 }
             }
-            
-            // Check common questions for exact matches
-            for (const question of topic.commonQuestions) {
-                if (question.toLowerCase().includes(queryLower) || queryLower.includes(question.toLowerCase())) {
-                    score += 20;
-                }
-            }
-            
-            // Check examples
-            for (const example of topic.examples) {
-                for (const term of queryTerms) {
-                    if (example.title.toLowerCase().includes(term)) {
-                        score += 3;
-                    }
-                    if (example.description.toLowerCase().includes(term)) {
-                        score += 2;
-                    }
-                }
-            }
-            
-            if (score > 0) {
-                results.push({ ...topic, score });
-            }
+
+            if (score > 0) results.push({ ...topic, score });
         }
-        
-        // Sort by score and return top results
+
         return results.sort((a, b) => b.score - a.score).slice(0, 5);
     }
 
