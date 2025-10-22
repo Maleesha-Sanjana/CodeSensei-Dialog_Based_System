@@ -539,6 +539,137 @@ body {
     flex-direction: column;
 }
 
+/* Auth (Login) Modal */
+.auth-modal {
+    max-width: 28rem;
+    background: transparent;
+    box-shadow: none;
+}
+
+.auth-card {
+    background: white;
+    border-radius: 1rem;
+    border: 1px solid #e5e7eb;
+    padding: 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.auth-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.auth-icon {
+    width: 3rem;
+    height: 3rem;
+    display: grid;
+    place-items: center;
+    border-radius: 9999px;
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    font-size: 1.25rem;
+}
+
+.auth-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.auth-subtitle {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.auth-input-group {
+    position: relative;
+}
+
+.auth-input-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.auth-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.auth-password-toggle {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+}
+
+.auth-error {
+    color: #dc2626;
+    font-size: 0.875rem;
+}
+
+.auth-actions {
+    margin-top: 0.25rem;
+}
+
+.auth-submit {
+    width: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.02s;
+}
+
+.auth-submit:hover {
+    background-color: #1d4ed8;
+}
+
+.auth-submit:active {
+    transform: translateY(1px);
+}
+
+.auth-hint {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+    text-align: center;
+}
+
 .modal-header {
     display: flex;
     align-items: center;

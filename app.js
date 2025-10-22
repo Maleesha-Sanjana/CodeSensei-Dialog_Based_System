@@ -369,6 +369,32 @@ class CodeSensei {
             sendBtn.disabled = !messageInput.value.trim();
         });
 
+        // Portfolio openers and closer
+        const portfolioBtn = document.getElementById('portfolioBtn');
+        const portfolioSidebar = document.getElementById('portfolioSidebar');
+        const closePortfolioModal = document.getElementById('closePortfolioModal');
+        [portfolioBtn, portfolioSidebar].forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    this.openPortfolio();
+                    document.getElementById('sidebar').classList.remove('open');
+                });
+            }
+        });
+        if (closePortfolioModal) {
+            closePortfolioModal.addEventListener('click', () => {
+                document.getElementById('portfolioModal').style.display = 'none';
+            });
+        }
+
+        const portfolioForm = document.getElementById('portfolioForm');
+        if (portfolioForm) {
+            portfolioForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.savePortfolio();
+            });
+        }
+
         // Login form
         const loginForm = document.getElementById('loginForm');
         if (loginForm) {
@@ -376,6 +402,27 @@ class CodeSensei {
                 e.preventDefault();
                 await this.handleLoginSubmit();
             });
+        }
+
+        // Password visibility toggle
+        const passInput = document.getElementById('loginPassword');
+        const passToggle = document.getElementById('loginPasswordToggle');
+        if (passInput && passToggle) {
+            passToggle.addEventListener('click', () => {
+                const isPassword = passInput.getAttribute('type') === 'password';
+                passInput.setAttribute('type', isPassword ? 'text' : 'password');
+                const icon = passToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-eye');
+                    icon.classList.toggle('fa-eye-slash');
+                }
+            });
+        }
+
+        // Guest login
+        const guestBtn = document.getElementById('loginGuestBtn');
+        if (guestBtn) {
+            guestBtn.addEventListener('click', () => this.loginAsGuest());
         }
 
         // Logout buttons
@@ -386,6 +433,70 @@ class CodeSensei {
                 btn.addEventListener('click', () => this.logout());
             }
         });
+    }
+
+    // ===== Portfolio =====
+    getCurrentUser() {
+        try {
+            return JSON.parse(localStorage.getItem('codesensei-user') || 'null');
+        } catch {
+            return null;
+        }
+    }
+
+    getPortfolioKey(email) {
+        return `codesensei-portfolio-${email}`;
+    }
+
+    openPortfolio() {
+        const user = this.getCurrentUser();
+        const modal = document.getElementById('portfolioModal');
+        const errorEl = document.getElementById('portfolioError');
+        if (!modal) return;
+
+        if (!user || user.guest) {
+            if (errorEl) {
+                errorEl.textContent = 'Sign in with email to edit portfolio. Guest cannot edit.';
+                errorEl.style.display = 'block';
+            }
+        } else {
+            if (errorEl) errorEl.style.display = 'none';
+            const key = this.getPortfolioKey(user.email);
+            const pf = JSON.parse(localStorage.getItem(key) || '{}');
+            document.getElementById('pfName').value = pf.name || '';
+            document.getElementById('pfBio').value = pf.bio || '';
+            document.getElementById('pfSkills').value = pf.skills || '';
+            document.getElementById('pfWebsite').value = pf.website || '';
+            document.getElementById('pfGithub').value = pf.github || '';
+        }
+
+        modal.style.display = 'flex';
+    }
+
+    savePortfolio() {
+        const user = this.getCurrentUser();
+        const errorEl = document.getElementById('portfolioError');
+        if (!user || user.guest) {
+            if (errorEl) {
+                errorEl.textContent = 'Sign in with email to edit portfolio. Guest cannot edit.';
+                errorEl.style.display = 'block';
+            }
+            return;
+        }
+
+        const pf = {
+            name: document.getElementById('pfName').value.trim(),
+            bio: document.getElementById('pfBio').value.trim(),
+            skills: document.getElementById('pfSkills').value.trim(),
+            website: document.getElementById('pfWebsite').value.trim(),
+            github: document.getElementById('pfGithub').value.trim(),
+            updatedAt: Date.now()
+        };
+        localStorage.setItem(this.getPortfolioKey(user.email), JSON.stringify(pf));
+
+        // Close modal
+        const modal = document.getElementById('portfolioModal');
+        if (modal) modal.style.display = 'none';
     }
 
     async sendMessage(content) {
@@ -701,6 +812,13 @@ class CodeSensei {
         // Close sidebar if open
         const sidebar = document.getElementById('sidebar');
         if (sidebar) sidebar.classList.remove('open');
+    }
+
+    loginAsGuest() {
+        // Create a guest session
+        localStorage.setItem('codesensei-user', JSON.stringify({ email: 'guest', guest: true }));
+        this.hideLoginModal();
+        this.setInputEnabled(true);
     }
 
     updateProgress(topicId) {
