@@ -352,39 +352,39 @@ class CodeSensei {
 
     setupEventListeners() {
         // Sidebar toggle
-        document.getElementById('menuBtn').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.add('open');
+        this.el('menuBtn').addEventListener('click', () => {
+            this.el('sidebar').classList.add('open');
         });
 
-        document.getElementById('closeSidebar').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.remove('open');
+        this.el('closeSidebar').addEventListener('click', () => {
+            this.el('sidebar').classList.remove('open');
         });
 
         // Progress modal
-        document.getElementById('progressBtn').addEventListener('click', () => {
-            document.getElementById('progressModal').style.display = 'flex';
+        this.el('progressBtn').addEventListener('click', () => {
+            this.setDisplay('progressModal', 'flex');
         });
 
-        document.getElementById('showProgress').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.remove('open');
-            document.getElementById('progressModal').style.display = 'flex';
+        this.el('showProgress').addEventListener('click', () => {
+            this.el('sidebar').classList.remove('open');
+            this.setDisplay('progressModal', 'flex');
         });
 
-        document.getElementById('closeProgressModal').addEventListener('click', () => {
-            document.getElementById('progressModal').style.display = 'none';
+        this.el('closeProgressModal').addEventListener('click', () => {
+            this.setDisplay('progressModal', 'none');
         });
 
         // Close modal on overlay click
-        document.getElementById('progressModal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('progressModal')) {
-                document.getElementById('progressModal').style.display = 'none';
+        this.el('progressModal').addEventListener('click', (e) => {
+            if (e.target === this.el('progressModal')) {
+                this.setDisplay('progressModal', 'none');
             }
         });
 
         // Message input
-        const inputForm = document.getElementById('inputForm');
-        const messageInput = document.getElementById('messageInput');
-        const sendBtn = document.getElementById('sendBtn');
+        const inputForm = this.el('inputForm');
+        const messageInput = this.el('messageInput');
+        const sendBtn = this.el('sendBtn');
 
         inputForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -396,23 +396,23 @@ class CodeSensei {
         });
 
         // Quick questions and suggestions
-        document.querySelectorAll('.question-btn, .suggestion-btn').forEach(btn => {
+        this.qsAll('.question-btn, .suggestion-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const question = btn.dataset.question;
                 if (question) {
                     this.sendMessage(question);
-                    document.getElementById('sidebar').classList.remove('open');
+                    this.el('sidebar').classList.remove('open');
                 }
             });
         });
 
         // Topic buttons
-        document.querySelectorAll('.topic-btn').forEach(btn => {
+        this.qsAll('.topic-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const topic = btn.dataset.topic;
                 if (topic) {
                     this.sendMessage(`Tell me about ${topic}`);
-                    document.getElementById('sidebar').classList.remove('open');
+                    this.el('sidebar').classList.remove('open');
                 }
             });
         });
@@ -423,29 +423,29 @@ class CodeSensei {
         });
 
         // Profile openers and closer
-        const profileBtn = document.getElementById('profileBtn');
-        const profileSidebar = document.getElementById('profileSidebar');
-        const closeProfileModal = document.getElementById('closeProfileModal');
+        const profileBtn = this.el('profileBtn');
+        const profileSidebar = this.el('profileSidebar');
+        const closeProfileModal = this.el('closeProfileModal');
         [profileBtn, profileSidebar].forEach(btn => {
             if (btn) {
                 btn.addEventListener('click', () => {
                     this.openProfile();
-                    document.getElementById('sidebar').classList.remove('open');
+                    this.el('sidebar').classList.remove('open');
                 });
             }
         });
         if (closeProfileModal) {
             closeProfileModal.addEventListener('click', () => {
-                document.getElementById('profileModal').style.display = 'none';
+                this.setDisplay('profileModal', 'none');
             });
         }
-        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+        const clearHistoryBtn = this.el('clearHistoryBtn');
         if (clearHistoryBtn) {
             clearHistoryBtn.addEventListener('click', () => this.clearSearchHistory());
         }
 
         // Login form
-        const loginForm = document.getElementById('loginForm');
+        const loginForm = this.el('loginForm');
         if (loginForm) {
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -454,8 +454,8 @@ class CodeSensei {
         }
 
         // Password visibility toggle
-        const passInput = document.getElementById('loginPassword');
-        const passToggle = document.getElementById('loginPasswordToggle');
+        const passInput = this.el('loginPassword');
+        const passToggle = this.el('loginPasswordToggle');
         if (passInput && passToggle) {
             passToggle.addEventListener('click', () => {
                 const isPassword = passInput.getAttribute('type') === 'password';
@@ -469,14 +469,14 @@ class CodeSensei {
         }
 
         // Guest login
-        const guestBtn = document.getElementById('loginGuestBtn');
+        const guestBtn = this.el('loginGuestBtn');
         if (guestBtn) {
             guestBtn.addEventListener('click', () => this.loginAsGuest());
         }
 
         // Logout buttons
-        const logoutHeader = document.getElementById('logoutHeader');
-        const logoutSidebar = document.getElementById('logoutSidebar');
+        const logoutHeader = this.el('logoutHeader');
+        const logoutSidebar = this.el('logoutSidebar');
         [logoutHeader, logoutSidebar].forEach(btn => {
             if (btn) {
                 btn.addEventListener('click', () => this.logout());
@@ -499,12 +499,12 @@ class CodeSensei {
 
     openProfile() {
         const user = this.getCurrentUser();
-        const modal = document.getElementById('profileModal');
+        const modal = this.el('profileModal');
         if (!modal) return;
-        const emailEl = document.getElementById('profileEmail');
-        const totalEl = document.getElementById('profileTotalQuestions');
-        const topicsEl = document.getElementById('profileTopicsExplored');
-        const listEl = document.getElementById('profileHistoryList');
+        const emailEl = this.el('profileEmail');
+        const totalEl = this.el('profileTotalQuestions');
+        const topicsEl = this.el('profileTopicsExplored');
+        const listEl = this.el('profileHistoryList');
 
         // Populate identity
         emailEl.textContent = user ? (user.guest ? 'Guest' : user.email) : '-';
@@ -529,7 +529,7 @@ class CodeSensei {
             });
         }
 
-        modal.style.display = 'flex';
+        this.setDisplay('profileModal', 'flex');
     }
 
     clearSearchHistory() {
@@ -571,11 +571,7 @@ class CodeSensei {
                 
                 // Ensure scroll after content is rendered
                 setTimeout(() => {
-                    const messagesContainer = document.getElementById('messages');
-                    const scroller = messagesContainer ? messagesContainer.parentElement : null;
-                    if (scroller) {
-                        scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
-                    }
+                    this.scrollToBottom();
                 }, 300);
             } else {
                 this.addMessage('assistant', "I'm not sure I understand that question. Could you try asking about programming concepts like variables, loops, functions, arrays, or objects? I'm here to help you learn programming fundamentals!");
@@ -724,7 +720,7 @@ class CodeSensei {
     }
 
     addMessage(type, content) {
-        const messagesContainer = document.getElementById('messages');
+        const messagesContainer = this.el('messages');
         const messageElement = document.createElement('div');
         messageElement.className = `message ${type}-message`;
         messageElement.id = `message-${this.currentMessageId++}`;
@@ -759,37 +755,38 @@ class CodeSensei {
         
         // Scroll to bottom immediately and smoothly
         setTimeout(() => {
-            const scroller = messagesContainer.parentElement;
-            if (scroller) {
-                scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
-            }
+            this.scrollToBottom();
         }, 50);
 
         // Hide suggestions after first message
         if (this.currentMessageId > 2) {
-            document.getElementById('suggestions').style.display = 'none';
+            this.setDisplay('suggestions', 'none');
         }
     }
 
     showTypingIndicator() {
-        document.getElementById('typingIndicator').style.display = 'block';
-        const messagesContainer = document.getElementById('messages');
-        const scroller = messagesContainer ? messagesContainer.parentElement : null;
+        this.setDisplay('typingIndicator', 'block');
         setTimeout(() => {
-            if (scroller) {
-                scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
-            }
+            this.scrollToBottom();
         }, 50);
     }
 
     hideTypingIndicator() {
-        document.getElementById('typingIndicator').style.display = 'none';
+        this.setDisplay('typingIndicator', 'none');
+    }
+
+    scrollToBottom() {
+        const messagesContainer = this.el('messages');
+        const scroller = messagesContainer ? messagesContainer.parentElement : null;
+        if (scroller) {
+            scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
+        }
     }
 
     setInputEnabled(enabled) {
-        const messageInput = document.getElementById('messageInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const suggestionBtns = document.querySelectorAll('.suggestion-btn');
+        const messageInput = this.el('messageInput');
+        const sendBtn = this.el('sendBtn');
+        const suggestionBtns = this.qsAll('.suggestion-btn');
         
         messageInput.disabled = !enabled;
         sendBtn.disabled = !enabled || !messageInput.value.trim();
@@ -814,17 +811,28 @@ class CodeSensei {
     }
 
     showLoginModal() {
-        const modal = document.getElementById('loginModal');
-        if (modal) modal.style.display = 'flex';
-        const emailEl = document.getElementById('loginEmail');
+        this.setDisplay('loginModal', 'flex');
+        const emailEl = this.el('loginEmail');
         if (emailEl) emailEl.focus();
     }
 
     hideLoginModal() {
-        const modal = document.getElementById('loginModal');
-        if (modal) modal.style.display = 'none';
-        const errorEl = document.getElementById('loginError');
+        this.setDisplay('loginModal', 'none');
+        const errorEl = this.el('loginError');
         if (errorEl) errorEl.style.display = 'none';
+    }
+
+    setDisplay(id, value) {
+        const el = this.el(id);
+        if (el) el.style.display = value;
+    }
+
+    el(id) {
+        return document.getElementById(id);
+    }
+
+    qsAll(selector) {
+        return document.querySelectorAll(selector);
     }
 
     getUsersStore() {
@@ -848,9 +856,9 @@ class CodeSensei {
     }
 
     async handleLoginSubmit() {
-        const emailEl = document.getElementById('loginEmail');
-        const passEl = document.getElementById('loginPassword');
-        const errorEl = document.getElementById('loginError');
+        const emailEl = this.el('loginEmail');
+        const passEl = this.el('loginPassword');
+        const errorEl = this.el('loginError');
         const email = (emailEl?.value || '').trim().toLowerCase();
         const password = passEl?.value || '';
 
@@ -890,7 +898,7 @@ class CodeSensei {
         this.showLoginModal();
         this.setInputEnabled(false);
         // Close sidebar if open
-        const sidebar = document.getElementById('sidebar');
+        const sidebar = this.el('sidebar');
         if (sidebar) sidebar.classList.remove('open');
     }
 
@@ -930,14 +938,14 @@ class CodeSensei {
 
     updateProgressDisplay() {
         // Update stats
-        document.getElementById('totalQuestions').textContent = this.userProgress.totalQuestions;
-        const topicsCountEl = document.getElementById('topicsExplored');
+        this.el('totalQuestions').textContent = this.userProgress.totalQuestions;
+        const topicsCountEl = this.el('topicsExplored');
         if (topicsCountEl) {
             topicsCountEl.textContent = Object.keys(this.userProgress.topics).length;
         }
 
         // Update topic progress
-        const topicsProgress = document.getElementById('topicsProgress');
+        const topicsProgress = this.el('topicsProgress');
         topicsProgress.innerHTML = '';
 
         const topics = [
