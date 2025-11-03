@@ -9,6 +9,7 @@ class CodeSensei {
             lastActiveDate: new Date().toISOString().split('T')[0]
         };
         this.currentMessageId = 1;
+        this.mlEngine = new SupervisedLearningEngine();
         
         this.init();
     }
@@ -50,6 +51,13 @@ class CodeSensei {
         this.setupEventListeners();
         this.updateProgressDisplay();
         await this.checkAuth();
+        
+        // Initialize supervised learning with current data
+        if (this.knowledgeBase) {
+            this.mlEngine.knowledgeBase = this.knowledgeBase;
+            this.mlEngine.updateFromBehavior(this.userProgress, this.knowledgeBase);
+            this.updateRecommendations();
+        }
     }
 
     async loadKnowledgeBase() {
@@ -543,6 +551,17 @@ class CodeSensei {
     async sendMessage(content) {
         // Add user message
         this.addMessage('user', content);
+        
+        // Save to search history
+        const user = this.getCurrentUser();
+        if (user) {
+            const key = this.getHistoryKey(user && !user.guest ? user.email : 'guest');
+            const history = JSON.parse(localStorage.getItem(key) || '[]');
+            history.push({ query: content, time: new Date().toISOString() });
+            // Keep only last 50 entries
+            const recentHistory = history.slice(-50);
+            localStorage.setItem(key, JSON.stringify(recentHistory));
+        }
 
         // Show typing indicator
         this.showTypingIndicator();
@@ -565,9 +584,15 @@ class CodeSensei {
                 // Update progress
                 this.updateProgress(bestMatch.id);
 
+                // Learn from this interaction (supervised learning)
+                this.mlEngine.learnFromInteraction(this.userProgress, this.knowledgeBase, bestMatch.id, true);
+
                 // Add assistant response
                 const response = this.formatResponse(bestMatch);
                 this.addMessage('assistant', response);
+                
+                // Update recommendations based on learning
+                this.updateRecommendations();
                 
                 // Ensure scroll after content is rendered
                 setTimeout(() => {
@@ -761,6 +786,10 @@ class CodeSensei {
         // Hide suggestions after first message
         if (this.currentMessageId > 2) {
             this.setDisplay('suggestions', 'none');
+            // Show AI recommendations after a few interactions
+            if (this.currentMessageId > 3 && this.userProgress.totalQuestions >= 2) {
+                this.showAIRecommendations();
+            }
         }
     }
 
@@ -934,6 +963,11 @@ class CodeSensei {
 
         this.saveProgress();
         this.updateProgressDisplay();
+        
+        // Update supervised learning model
+        if (this.knowledgeBase) {
+            this.mlEngine.updateFromBehavior(this.userProgress, this.knowledgeBase);
+        }
     }
 
     updateProgressDisplay() {
@@ -984,6 +1018,182 @@ class CodeSensei {
 
             topicsProgress.appendChild(topicElement);
         });
+        
+        // Update ML recommendations and insights
+        this.updateRecommendations();
+        this.updateLearningInsights();
+    }
+
+    // Update personalized recommendations using supervised learning
+    updateRecommendations() {
+        if (!this.knowledgeBase) return;
+        
+        const recommendationsContainer = this.el('mlRecommendations');
+        if (!recommendationsContainer) return;
+
+        const recommendations = this.mlEngine.getRecommendations(this.userProgress, this.knowledgeBase, 3);
+        
+        recommendationsContainer.innerHTML = '';
+        
+        if (recommendations.length === 0) {
+            recommendationsContainer.innerHTML = '<p style="color: #6b7280; padding: 1rem;">Keep exploring topics to get personalized recommendations!</p>';
+            return;
+        }
+
+        recommendations.forEach((rec, index) => {
+            const recElement = document.createElement('div');
+            recElement.className = 'recommendation-card';
+            recElement.style.cssText = `
+                background: white;
+                border: 1px solid #e5e7eb;
+                border-radius: 0.5rem;
+                padding: 1rem;
+                margin-bottom: 0.75rem;
+                cursor: pointer;
+                transition: all 0.2s;
+            `;
+            recElement.onmouseover = () => {
+                recElement.style.borderColor = '#3b82f6';
+                recElement.style.boxShadow = '0 2px 4px rgba(59, 130, 246, 0.1)';
+            };
+            recElement.onmouseout = () => {
+                recElement.style.borderColor = '#e5e7eb';
+                recElement.style.boxShadow = 'none';
+            };
+            recElement.onclick = () => {
+                this.sendMessage(`Tell me about ${rec.topic.title.toLowerCase()}`);
+                this.setDisplay('progressModal', 'none');
+            };
+
+            const confidencePercent = Math.round(rec.confidence * 100);
+            const icon = this.getTopicIcon(rec.topic.id);
+            
+            recElement.innerHTML = `
+                <div style="display: flex; align-items: start; gap: 0.75rem;">
+                    <div style="font-size: 1.5rem;">${icon}</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: #111827; margin-bottom: 0.25rem;">
+                            ${rec.topic.title}
+                        </div>
+                        <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.5rem;">
+                            ${rec.reason}
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <div style="flex: 1; height: 4px; background: #e5e7eb; border-radius: 2px; overflow: hidden;">
+                                <div style="height: 100%; width: ${confidencePercent}%; background: #3b82f6; transition: width 0.3s;"></div>
+                            </div>
+                            <span style="font-size: 0.75rem; color: #6b7280;">${confidencePercent}% match</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            recommendationsContainer.appendChild(recElement);
+        });
+    }
+
+    // Update learning insights from ML model
+    updateLearningInsights() {
+        if (!this.knowledgeBase) return;
+        
+        const insightsContainer = this.el('mlInsights');
+        if (!insightsContainer) return;
+
+        const insights = this.mlEngine.getLearningInsights(this.userProgress, this.knowledgeBase);
+        
+        insightsContainer.innerHTML = `
+            <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem;">
+                <div style="margin-bottom: 1rem;">
+                    <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Learning Style</div>
+                    <div style="font-weight: 600; color: #111827; text-transform: capitalize;">
+                        ${insights.learningStyle.replace('-', ' ')}
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Preferred Difficulty</div>
+                    <div style="font-weight: 600; color: #111827; text-transform: capitalize;">
+                        ${insights.preferredDifficulty}
+                    </div>
+                </div>
+                
+                ${insights.strengths.length > 0 ? `
+                    <div style="margin-bottom: 1rem;">
+                        <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.5rem;">Your Strengths</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            ${insights.strengths.map(strength => `
+                                <span style="background: #dbeafe; color: #1e40af; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem;">
+                                    ${strength}
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+                
+                ${insights.areasForGrowth.length > 0 ? `
+                    <div>
+                        <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.5rem;">Areas to Explore</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            ${insights.areasForGrowth.map(area => `
+                                <span style="background: #fef3c7; color: #92400e; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem;">
+                                    ${area}
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : '<p style="color: #6b7280; font-size: 0.875rem;">Explore more topics to see insights!</p>'}
+            </div>
+        `;
+    }
+
+    // Show AI recommendations in the chat interface
+    showAIRecommendations() {
+        if (!this.knowledgeBase) return;
+        
+        const recommendationsContainer = this.el('aiRecommendations');
+        const recommendationsList = this.el('recommendationsList');
+        
+        if (!recommendationsContainer || !recommendationsList) return;
+
+        const recommendations = this.mlEngine.getRecommendations(this.userProgress, this.knowledgeBase, 3);
+        
+        if (recommendations.length === 0) {
+            this.setDisplay('aiRecommendations', 'none');
+            return;
+        }
+
+        recommendationsList.innerHTML = '';
+        
+        recommendations.forEach(rec => {
+            const btn = document.createElement('button');
+            btn.className = 'suggestion-btn recommendation-btn';
+            btn.innerHTML = `
+                <span style="margin-right: 0.5rem;">${this.getTopicIcon(rec.topic.id)}</span>
+                <span>${rec.topic.title}</span>
+                <span style="margin-left: auto; font-size: 0.75rem; opacity: 0.7;">${Math.round(rec.confidence * 100)}%</span>
+            `;
+            btn.onclick = () => {
+                this.sendMessage(`Tell me about ${rec.topic.title.toLowerCase()}`);
+            };
+            recommendationsList.appendChild(btn);
+        });
+
+        this.setDisplay('aiRecommendations', 'flex');
+    }
+
+    // Helper to get topic icon
+    getTopicIcon(topicId) {
+        const iconMap = {
+            'variables': '📝',
+            'loops': '🔄',
+            'functions': '⚙️',
+            'conditionals': '🔀',
+            'arrays': '📋',
+            'objects': '📦',
+            'classes': '🏗️',
+            'error-handling': '⚠️'
+        };
+        return iconMap[topicId] || '📚';
     }
 }
 

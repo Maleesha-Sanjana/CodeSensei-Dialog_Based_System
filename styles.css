@@ -442,6 +442,56 @@ body {
     cursor: not-allowed;
 }
 
+/* AI Recommendations */
+.ai-recommendations {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 0.75rem;
+    color: white;
+}
+
+.recommendations-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.recommendations-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.recommendation-btn {
+    background: rgba(255, 255, 255, 0.95) !important;
+    color: #374151 !important;
+    display: flex;
+    align-items: center;
+    padding: 0.625rem 1rem !important;
+}
+
+.recommendation-btn:hover {
+    background: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.recommendations-container {
+    margin-top: 0.75rem;
+}
+
+.insights-container {
+    margin-top: 0.75rem;
+}
+
 /* Typing Indicator */
 .typing-indicator .message-content {
     padding: 1rem;
