@@ -136,6 +136,17 @@
                     <button class="suggestion-btn" data-question="How do I handle errors?">How do I handle errors?</button>
                 </div>
 
+                <!-- AI Recommendations (shown after some interactions) -->
+                <div class="ai-recommendations" id="aiRecommendations" style="display: none;">
+                    <div class="recommendations-header">
+                        <i class="fas fa-brain"></i>
+                        <span>Recommended for You</span>
+                    </div>
+                    <div class="recommendations-list" id="recommendationsList">
+                        <!-- Dynamic recommendations will appear here -->
+                    </div>
+                </div>
+
                 <!-- Typing Indicator -->
                 <div class="typing-indicator" id="typingIndicator" style="display: none;">
                     <div class="message assistant-message">
@@ -203,6 +214,27 @@
                         </div>
                     </div>
 
+                    <!-- AI-Powered Recommendations -->
+                    <div class="progress-section" style="margin-top: 2rem;">
+                        <h3>
+                            <i class="fas fa-brain" style="margin-right: 0.5rem;"></i>
+                            Personalized Recommendations
+                        </h3>
+                        <div class="recommendations-container" id="mlRecommendations">
+                            <!-- Recommendations will be generated here -->
+                        </div>
+                    </div>
+
+                    <!-- Learning Insights -->
+                    <div class="progress-section" style="margin-top: 2rem;">
+                        <h3>
+                            <i class="fas fa-lightbulb" style="margin-right: 0.5rem;"></i>
+                            Learning Insights
+                        </h3>
+                        <div class="insights-container" id="mlInsights">
+                            <!-- Insights will be generated here -->
+                        </div>
+                    </div>
                     
                 </div>
             </div>
@@ -291,6 +323,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <script src="supervised-learning.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
